@@ -84,9 +84,9 @@ Unsupervised classification means no labels are used to train the model. The alg
 ### K-means Clustering
 
 K-means clustering is an unsupervised learning algorithm that partitions a dataset into a predefined number of clusters, 
-𝑘, by grouping data points according to feature similarity (MacQueen, 1967). The method iteratively assigns each observation to the nearest centroid based on squared Euclidean distance and then updates the centroid positions to minimise within-cluster variance. This assignment-update process continues until convergence, typically reaching a local optimum. K-means is computationally efficient, straightforward to implement, and well suited to exploratory analysis when the underlying data structure is unknown. However, it assumes relatively simple cluster geometry and produces hard class assignments, which may limit flexibility for complex geophysical feature distributions.
+𝑘, by grouping data points according to feature similarity [(MacQueen, 1967)](https://projecteuclid.org/ebooks/berkeley-symposium-on-mathematical-statistics-and-probability/Proceedings-of-the-Fifth-Berkeley-Symposium-on-Mathematical-Statistics-and/chapter/Some-methods-for-classification-and-analysis-of-multivariate-observations/bsmsp/1200512992). The method iteratively assigns each observation to the nearest centroid based on squared Euclidean distance and then updates the centroid positions to minimise within-cluster variance. This assignment-update process continues until convergence, typically reaching a local optimum. K-means is computationally efficient, straightforward to implement, and well suited to exploratory analysis when the underlying data structure is unknown. However, it assumes relatively simple cluster geometry and produces hard class assignments, which may limit flexibility for complex geophysical feature distributions.
 
-Below is a basic code implementation for a K-means Clustering Model.
+Below is a basic code implementation for a K-means Clustering Model:
 
 ```
 from matplotlib.colors import ListedColormap
@@ -108,12 +108,13 @@ plt.title("K-means clustering")
 plt.savefig("kmeans_model.png", dpi=300, bbox_inches="tight")
 plt.show()
 ```
+![]()
 
 ### Gaussian Mixture Models (GMMs)
 
-Gaussian Mixture Models (GMMs) are probabilistic clustering methods that represent a dataset as a mixture of Gaussian distributions, each defined by its own mean, covariance, and mixing coefficient (Reynolds et al., 2009). Model parameters are estimated using the Expectation–Maximization (EM) algorithm, which iteratively alternates between estimating the probability of cluster membership (E-step) and maximising the likelihood of the data given those assignments (M-step). Unlike K-means, GMM produces soft probabilistic classifications and allows clusters to adopt elliptical shapes through flexible covariance modelling. This makes GMM particularly suitable for geophysical datasets where feature distributions may overlap or exhibit non-spherical structure, providing a more adaptable framework for unsupervised classification.
+Gaussian Mixture Models (GMMs) are probabilistic clustering methods that represent a dataset as a mixture of Gaussian distributions, each defined by its own mean, covariance, and mixing coefficient [(Reynolds et al., 2009)](https://link.springer.com/rwe/10.1007/978-0-387-73003-5_196). Model parameters are estimated using the Expectation–Maximization (EM) algorithm, which iteratively alternates between estimating the probability of cluster membership (E-step) and maximising the likelihood of the data given those assignments (M-step). Unlike K-means, GMM produces soft probabilistic classifications and allows clusters to adopt elliptical shapes through flexible covariance modelling. This makes GMM particularly suitable for geophysical datasets where feature distributions may overlap or exhibit non-spherical structure, providing a more adaptable framework for unsupervised classification.
 
-Below is a basic code implementation for a GMM Model.
+Below is a basic code implementation for a GMM Model:
 
 ```
 from sklearn.mixture import GaussianMixture
@@ -137,7 +138,76 @@ plt.title('Gaussian Mixture Model')
 plt.savefig("GMM_model.png", dpi=300, bbox_inches="tight")
 plt.show()
 ```
+![]()
 
+The notebook runs both methods, treating K-means as a compact baseline and GMM as the main classification approach.
+
+
+### Mapping Clusters to Physical Classes (Sea Ice vs Lead)
+
+Because clustering is unsupervised, output cluster IDs are arbitrary. The notebook therefore assigns physical meaning using feature interpretation:
+
+- Cluster-level statistics (mean PP, Sigma0, SSD) are computed
+- The cluster with higher Pulse Peakiness is assigned as Lead (specular reflections)
+- The remaining cluster is assigned as Sea ice
+
+Final label convention used throughout the notebook:
+
+0 = Sea ice
+
+1 = Lead
+
+This ensures physical interpretability of clustering outputs and enables valid comparison to ESA binary labels.
+
+## Physical waveform alignment
+
+Waveforms may be shifted due to tracking window drift. If waveforms are averaged without alignment:
+
+- Peaks smear
+- The class-mean echo becomes misleading
+ 
+The notebook applies waveform alignment before computing aligned class-mean waveforms. This demonstrates how waveform registration affects the sharpness and interpretability of averaged echoes. Shifts on the order of ~10 bins correspond to ~23 cm in range, which is significant for cryospheric altimetry measurements.
+
+![]()
+
+## Results 
+
+### Mean echo shapes
+Mean ± standard deviation waveforms confirm physically consistent echo behaviour and demonstrate the effect of waveform alignment on class-mean interpretability. The figures below show the difference between before and after alignment. 
+
+![]()
+
+**Interpretation:**
+- Lead echoes exhibit sharper, higher-amplitude peaks than sea ice echoes
+- Sea ice echoes are broader and less peaked
+- Alignment reduces peak smearing and improves registration of the leading edge across echoes
+
+### ESA validation
+The confusion matrix below summarises agreement between ESA classification (true labels) and GMM output (predicted labels) within the restricted ice/lead subset.
+
+![]()
+
+**Key observations:**
+- High agreement between GMM predictions and ESA labels
+- Minimal misclassification between sea ice and lead
+- Performance is influenced by the restricted binary subset and ESA pre-filtering of ambiguous surfaces
+
+
+
+
+### K-means vs ESA (baseline)
+The K-means baseline provides a useful comparison. While K-means captures the dominant separation between specular and diffuse echoes, its rigid cluster geometry is less adaptable to overlapping feature distributions. The comparison reinforces the methodological justification for selecting GMM as the primary model. 
+
+
+
+## Conclusion
+
+
+## How to Run
+
+
+
+## Repository Structure
 
 
 
