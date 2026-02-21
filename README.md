@@ -51,6 +51,7 @@ The analysis uses Sentinel-3 Level-2 radar altimetry data (NetCDF format), compr
 *More information on Sentinel-3 can be found here [Sentinel-3 mission overview](https://sentinels.copernicus.eu/web/sentinel/copernicus/sentinel-3)*
 
 **Binary Subset Selection**
+
 To focus the classification task, the dataset is restricted to observations labelled by ESA as:
 - Sea ice (ESA = 1)
 - Lead (ESA = 2)
