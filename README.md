@@ -1,21 +1,36 @@
 # Unsupervised Classification of Sentinel-3 Altimetry Echoes
 
-Contents
+## Contents
 
-Project Background
+- [Project Background](#project-background)
+- [Objectives](#objectives)
+- [Data](#data)
+- [Methodology](#methodology)
+- [Results](#results)
+- [Discussion](#discussion)
+- [Conclusion](#conclusion)
+- [How to Run](#how-to-run)
+- [Repository Structure](#repository-structure)
 
-Objectives
 
-Data
+## Project Background 
 
-Methodology
+### Why Collocation Matters
 
-Results
+In Earth Observation, many applications link measurements from different sensors. This requires collocation, meaning matching observations in:
 
-Discussion
+- **Space** (overlapping footprint)
+- **Time** (same time or within an acceptable window)
 
-Conclusion
+Collocation is non-trivial because sensors differ in:
 
-How to Run
+- Spatial resolution  
+- Sampling geometry  
+- Revisit time  
 
-Repository Structure
+For example:
+
+- **Sentinel-2 imagery** provides a 2D fixed grid (Eulerian frame) at ~10 m resolution.  
+- **Sentinel-3 altimetry** samples along a 1D moving track (Lagrangian frame).  
+
+This results in a mismatch in spatial dimensions when comparing datasets. Echo classification is therefore commonly combined with collocated datasets (such as satellite imagery) to support training, validation, and interpretation.
