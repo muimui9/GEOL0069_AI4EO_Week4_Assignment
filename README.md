@@ -77,7 +77,7 @@ Rather than clustering raw 256-dimensional waveforms directly, the notebook cons
 
 Each echo becomes a point in a 3-dimensional feature space. Features are standardised prior to clustering.
 
-### Unsupervised classification (K-means and GMM)
+## Unsupervised classification (K-means and GMM)
 
 Unsupervised classification means no labels are used to train the model. The algorithm identifies structure in the data without being given surface classes.
 
