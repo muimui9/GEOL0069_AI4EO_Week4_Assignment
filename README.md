@@ -9,12 +9,11 @@ This project performs unsupervised classification of Sentinel-3 radar altimetry 
 - [Project Background](#project-background)
 - [Data](#data)
 - [Methodology](#methodology)
-  - [Unsupervised classification (K-means and GMM)](#unsupervised-classification-k-means-and-GMM)
+  - [Unsupervised classification (K-means and GMM)](#unsupervised-classification-k-means-and-gmm)
   - [Physical waveform alignment](#physical-waveform-alignment)
 - [Results](#results)
   - [Mean echo shapes](#mean-echo-shapes)
   - [ESA validation](#esa-validation)
-- [Discussion](#discussion)
 - [Conclusion](#conclusion)
 - [How to Run](#how-to-run)
 - [Repository Structure](#repository-structure)
@@ -57,7 +56,7 @@ To focus the classification task, the dataset is restricted to observations labe
 - Sea ice (ESA = 1)
 - Lead (ESA = 2)
   
-This reduction to a binary ice–lead subset simplifies the discrimination problem and should be considered when interpreting classification performance, as other surface types are excluded from the analysis.
+This reduction to a binary ice-lead subset simplifies the discrimination problem and should be considered when interpreting classification performance, as other surface types are excluded from the analysis.
 
 [Back to top](#unsupervised-classification-of-sentinel-3-altimetry-echoes)
 
@@ -108,7 +107,7 @@ plt.title("K-means clustering")
 plt.savefig("kmeans_model.png", dpi=300, bbox_inches="tight")
 plt.show()
 ```
-![]()
+![kmeans_model](kmeans_model.png)
 
 ### Gaussian Mixture Models (GMMs)
 
@@ -138,7 +137,7 @@ plt.title('Gaussian Mixture Model')
 plt.savefig("GMM_model.png", dpi=300, bbox_inches="tight")
 plt.show()
 ```
-![]()
+![GMM_model](GMM_model.png)
 
 The notebook runs both methods, treating K-means as a compact baseline and GMM as the main classification approach.
 
@@ -168,45 +167,67 @@ Waveforms may be shifted due to tracking window drift. If waveforms are averaged
  
 The notebook applies waveform alignment before computing aligned class-mean waveforms. This demonstrates how waveform registration affects the sharpness and interpretability of averaged echoes. Shifts on the order of ~10 bins correspond to ~23 cm in range, which is significant for cryospheric altimetry measurements.
 
-![]()
+![effect_of_alignment](effect_of_alignment.png)
+
+The figure illustrates individual waveform shifts before and after alignment for both sea ice and lead classes. In several cases, the original waveforms (purple) exhibit noticeable offsets in peak position, whereas the aligned waveforms (pink) are repositioned to a consistent leading-edge location. This correction reduces peak dispersion across samples. The effect is particularly clear for lead echoes, where the specular peak becomes more tightly registered after alignment. For sea ice, broader returns also show improved coherence in the leading-edge region. These examples demonstrate that alignment reduces artificial peak variability caused by tracking-window drift and ensures that subsequent class-mean waveforms are physically meaningful. 
+
+[Back to top](#unsupervised-classification-of-sentinel-3-altimetry-echoes)
 
 ## Results 
 
 ### Mean echo shapes
 Mean ± standard deviation waveforms confirm physically consistent echo behaviour and demonstrate the effect of waveform alignment on class-mean interpretability. The figures below show the difference between before and after alignment. 
 
-![]()
+![mean_echo_waveform_before_alignment](mean_echo_waveform_before_alignment.png)
+![mean_echo_waveform_after_alignment](mean_echo_waveform_after_alignment.png)
 
-**Interpretation:**
-- Lead echoes exhibit sharper, higher-amplitude peaks than sea ice echoes
-- Sea ice echoes are broader and less peaked
-- Alignment reduces peak smearing and improves registration of the leading edge across echoes
+**Interpretation**
+
+The comparison between the pre-alignment and post-alignment mean waveforms highlights the importance of waveform registration for physically meaningful averaging. 
+
+Before alignment, the class-mean lead waveform exhibits substantial variance around the peak region, reflected by the large standard deviation envelope. This broad uncertainty band indicates that individual echoes are not temporally aligned, leading to artificial peak smearing in the mean profile. Sea ice echoes show a similar, though less extreme, dispersion.
+
+After alignment, both classes display markedly reduced peak spread. The lead class forms a sharply defined, high-amplitude specular peak with a narrow leading edge, while the sea ice class exhibits a broader and more gradually decaying return consistent with rougher surface scattering. The reduction in standard deviation near the peak demonstrates improved coherence across individual echoes.
+
+These results confirm that waveform alignment is essential for reliable class-mean interpretation and that the physical differences between specular open water and diffuse sea ice scattering become clearer once tracking-window shifts are corrected.
 
 ### ESA validation
 The confusion matrix below summarises agreement between ESA classification (true labels) and GMM output (predicted labels) within the restricted ice/lead subset.
 
-![]()
+![confusion_matrix_GMM](confusion_matrix_GMM.png)
 
 **Key observations:**
-- High agreement between GMM predictions and ESA labels
-- Minimal misclassification between sea ice and lead
-- Performance is influenced by the restricted binary subset and ESA pre-filtering of ambiguous surfaces
 
+The confusion matrix demonstrates very strong agreement between the Gaussian Mixture Model (GMM) predictions and the ESA surface-type labels within the restricted ice/lead subset, with an overall accuracy exceeding 99%. The dominant diagonal structure indicates that both sea ice and lead classes are identified consistently, with only a small number of off-diagonal misclassifications.
 
+The limited number of errors suggests that the three-dimensional feature space (Sigma0, Pulse Peakiness, and Stack Standard Deviation) provides effective physical separation between specular and diffuse echo types. In particular, the high accuracy for the lead class reflects the distinct, sharply peaked waveform signature of open water. The probabilistic nature of GMM allows flexible modelling of cluster covariance, supporting robust separation even where feature distributions partially overlap.
 
+It is important to note that the high performance is influenced by the dataset restriction to ESA-labelled ice and lead only. Ambiguous or mixed surface types have been excluded, meaning the evaluation reflects a controlled binary discrimination task rather than a full multi-class classification problem.
 
 ### K-means vs ESA (baseline)
-The K-means baseline provides a useful comparison. While K-means captures the dominant separation between specular and diffuse echoes, its rigid cluster geometry is less adaptable to overlapping feature distributions. The comparison reinforces the methodological justification for selecting GMM as the primary model. 
+A compact baseline comparison is included using K-means (K = 2). The same PP-based mapping rule is applied to assign physical meaning to the clusters.
 
+![confusion_matrix_kmeans](confusion_matrix_kmeans.png)
 
+**Key observations:**
+
+The K-means baseline also achieves high overall accuracy, confirming that the dominant separation between specular leads and rougher sea ice echoes is strong in the selected feature space. The clustering captures the primary structural distinction between the two surface types, with minimal off-diagonal errors in the confusion matrix.
+
+However, K-means relies on hard assignments and implicitly assumes relatively simple cluster geometry. Its slightly lower performance relative to GMM is consistent with its centroid-based partitioning, which does not explicitly model covariance structure. While effective for this binary case, K-means offers less flexibility for handling overlapping or anisotropic feature distributions.
+
+The comparison therefore reinforces the methodological justification for selecting GMM as the primary classifier in this study.
+
+[Back to top](#unsupervised-classification-of-sentinel-3-altimetry-echoes)
 
 ## Conclusion
+This project demonstrates a workflow for the unsupervised classification of Sentinel-3 radar altimetry echoes into sea ice and leads. By combining compact, physically interpretable feature engineering, probabilistic Gaussian Mixture Model clustering, cluster-to-surface mapping based on radar scattering behaviour, waveform alignment and validation against ESA labels, the method achieves statistically meaningful results. The analysis highlights how machine learning, when integrated with instrument geometry and geophysical understanding, can reliably extract surface-type information from complex radar observations.
 
+[Back to top](#unsupervised-classification-of-sentinel-3-altimetry-echoes)
 
 ## How to Run
 
 
-
+[Back to top](#unsupervised-classification-of-sentinel-3-altimetry-echoes)
 ## Repository Structure
 
 
