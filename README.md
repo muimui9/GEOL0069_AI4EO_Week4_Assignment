@@ -107,7 +107,7 @@ plt.title("K-means clustering")
 plt.savefig("kmeans_model.png", dpi=300, bbox_inches="tight")
 plt.show()
 ```
-![kmeans_model](kmeans_model.png)
+![kmeans_model](figures/kmeans_model.png)
 
 ### Gaussian Mixture Models (GMMs)
 
@@ -137,7 +137,7 @@ plt.title('Gaussian Mixture Model')
 plt.savefig("GMM_model.png", dpi=300, bbox_inches="tight")
 plt.show()
 ```
-![GMM_model](GMM_model.png)
+![GMM_model](figures/GMM_model.png)
 
 The notebook runs both methods, treating K-means as a compact baseline and GMM as the main classification approach.
 
@@ -167,7 +167,7 @@ Waveforms may be shifted due to tracking window drift. If waveforms are averaged
  
 The notebook applies waveform alignment before computing aligned class-mean waveforms. This demonstrates how waveform registration affects the sharpness and interpretability of averaged echoes. Shifts on the order of ~10 bins correspond to ~23 cm in range, which is significant for cryospheric altimetry measurements.
 
-![effect_of_alignment](effect_of_alignment.png)
+![effect_of_alignment](figures/effect_of_alignment.png)
 
 The figure illustrates individual waveform shifts before and after alignment for both sea ice and lead classes. In several cases, the original waveforms (purple) exhibit noticeable offsets in peak position, whereas the aligned waveforms (pink) are repositioned to a consistent leading-edge location. This correction reduces peak dispersion across samples. The effect is particularly clear for lead echoes, where the specular peak becomes more tightly registered after alignment. For sea ice, broader returns also show improved coherence in the leading-edge region. These examples demonstrate that alignment reduces artificial peak variability caused by tracking-window drift and ensures that subsequent class-mean waveforms are physically meaningful. 
 
@@ -178,8 +178,8 @@ The figure illustrates individual waveform shifts before and after alignment for
 ### Mean echo shapes
 Mean ± standard deviation waveforms confirm physically consistent echo behaviour and demonstrate the effect of waveform alignment on class-mean interpretability. The figures below show the difference between before and after alignment. 
 
-![mean_echo_waveform_before_alignment](mean_echo_waveform_before_alignment.png)
-![mean_echo_waveform_after_alignment](mean_echo_waveform_after_alignment.png)
+![mean_echo_waveform_before_alignment](figures/mean_echo_waveform_before_alignment.png)
+![mean_echo_waveform_after_alignment](figures/mean_echo_waveform_after_alignment.png)
 
 **Interpretation**
 
@@ -194,9 +194,9 @@ These results confirm that waveform alignment is essential for reliable class-me
 ### ESA validation
 The confusion matrix below summarises agreement between ESA classification (true labels) and GMM output (predicted labels) within the restricted ice/lead subset.
 
-![confusion_matrix_GMM](confusion_matrix_GMM.png)
+![confusion_matrix_GMM](figures/confusion_matrix_GMM.png)
 
-**Key observations:**
+**Key observations**
 
 The confusion matrix demonstrates very strong agreement between the Gaussian Mixture Model (GMM) predictions and the ESA surface-type labels within the restricted ice/lead subset, with an overall accuracy exceeding 99%. The dominant diagonal structure indicates that both sea ice and lead classes are identified consistently, with only a small number of off-diagonal misclassifications.
 
@@ -207,9 +207,9 @@ It is important to note that the high performance is influenced by the dataset r
 ### K-means vs ESA (baseline)
 A compact baseline comparison is included using K-means (K = 2). The same PP-based mapping rule is applied to assign physical meaning to the clusters.
 
-![confusion_matrix_kmeans](confusion_matrix_kmeans.png)
+![confusion_matrix_kmeans](figures/confusion_matrix_kmeans.png)
 
-**Key observations:**
+**Key observations**
 
 The K-means baseline also achieves high overall accuracy, confirming that the dominant separation between specular leads and rougher sea ice echoes is strong in the selected feature space. The clustering captures the primary structural distinction between the two surface types, with minimal off-diagonal errors in the confusion matrix.
 
@@ -226,9 +226,13 @@ This project demonstrates a workflow for the unsupervised classification of Sent
 
 ## How to Run
 
+1. Install dependencies:
+
+```
+pip install -r requirements.txt
+```
+2. Download the Sentinel-3 SAR NetCDF file (`enhanced_measurement.nc`) and update the dataset path inside the notebook.
+
+3. Open and run the notebook: [Week4_Unsupervised_Learning_Methods.ipynb](Week4_Unsupervised_Learning_Methods.ipynb)
 
 [Back to top](#unsupervised-classification-of-sentinel-3-altimetry-echoes)
-## Repository Structure
-
-
-
