@@ -48,7 +48,7 @@ The analysis uses Sentinel-3 Level-2 radar altimetry data (NetCDF format), compr
 - **Backscatter coefficient** (Sigma0)
 - **Echo stack** information used to derive Stack Standard Deviation (SSD)
 
-More information on Sentinel-3 can be found here [Sentinel-3 mission overview](https://sentinels.copernicus.eu/web/sentinel/copernicus/sentinel-3)
+*More information on Sentinel-3 can be found here [Sentinel-3 mission overview](https://sentinels.copernicus.eu/web/sentinel/copernicus/sentinel-3)*
 
 **Binary Subset Selection**
 To focus the classification task, the dataset is restricted to observations labelled by ESA as:
