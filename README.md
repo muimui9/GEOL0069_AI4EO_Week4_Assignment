@@ -16,7 +16,6 @@ This project performs unsupervised classification of Sentinel-3 radar altimetry 
   - [ESA validation](#esa-validation)
 - [Conclusion](#conclusion)
 - [How to Run](#how-to-run)
-- [Repository Structure](#repository-structure)
 
 ## Project Background 
 
