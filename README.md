@@ -10,15 +10,7 @@ Data
 
 Methodology
 
-Unsupervised clustering (GMM and K-means)
-
-Physical waveform alignment
-
 Results
-
-Mean echo shapes
-
-ESA validation
 
 Discussion
 
